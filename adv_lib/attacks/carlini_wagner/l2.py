@@ -92,7 +92,8 @@ def carlini_wagner_l2(model: nn.Module,
             adv_inputs = (torch.tanh(t_inputs + modifier) + 1) / 2
             l2_squared = (adv_inputs - inputs).flatten(1).square().sum(1)
             l2 = l2_squared.detach().sqrt()
-            logits = model(adv_inputs)
+            texts = clip.tokenize(["not a login button", "a login button"]).to(device)
+            logits, _ = model(adv_inputs, texts)
 
             if outer_step == 0 and i == 0:
                 # setup the target variable, we need it to be in one-hot form for the loss function
