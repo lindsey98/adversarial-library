@@ -104,7 +104,8 @@ def carlini_wagner_linf(model: nn.Module,
 
             adv_inputs = (torch.tanh(t_inputs_ + modifier_) + 1) / 2
             linf = (adv_inputs.detach() - inputs_).flatten(1).norm(p=float('inf'), dim=1)
-            logits = model(adv_inputs)
+            texts = clip.tokenize(["not a login button", "a login button"]).to(device)
+            logits, _ = model(adv_inputs, texts)
 
             if i == 0:
                 labels_infhot = torch.zeros_like(logits).scatter_(1, labels[to_optimize].unsqueeze(1), float('inf'))
